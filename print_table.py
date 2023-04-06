@@ -1,31 +1,40 @@
-data = {
-    'Name': ['Alice', 'Bob', 'Charlie'],
-    'Age': [28, 32, 25],
-    'City': ['New York', 'San Francisco', 'Los Angeles']
-}
+data = [
+    {
+        'Product': 'Product 1',
+        'Price': 120.50,
+        'Quantity': 15,
+        'In Stock': True
+    },
+    {
+        'Product': 'Product 2',
+        'Price': 199.99,
+        'Quantity': 8,
+        'In Stock': False
+    }
+]
 
-# Find the maximum length for each column
-column_widths = {}
-for key, values in data.items():
-    max_value_length = max(len(str(value)) for value in values)
-    column_widths[key] = max(len(key), max_value_length)
+# Find the maximum length for each value
+value_widths = []
+for product in data:
+    max_value_length = max(len(str(value)) for value in product.values())
+    value_widths.append(max_value_length)
 
 # Print header
 header = ''
-for key, width in column_widths.items():
-    header += f"{key:{width}s} | "
+for i, width in enumerate(value_widths):
+    header += f"{data[i]['Product']:{width}s} | "
 print(header.rstrip())
 
 # Print separator
 separator = ''
-for width in column_widths.values():
+for width in value_widths:
     separator += '-' * width + '-+-'
 print(separator.rstrip())
 
 # Print rows
-num_rows = len(data[list(data.keys())[0]])
-for i in range(num_rows):
+keys = list(data[0].keys())
+for key in keys[1:]:
     row = ''
-    for key, width in column_widths.items():
-        row += f"{str(data[key][i]):{width}s} | "
-    print(row.rstrip())
+    for i, width in enumerate(value_widths):
+        row += f"{str(data[i][key]):{width}s} | "
+    print(f"{key} | {row.rstrip()}")
