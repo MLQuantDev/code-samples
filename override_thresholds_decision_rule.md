@@ -47,3 +47,36 @@ In this code, the error rate $\epsilon(S)$ is calculated by summing over all rat
 The `get` method is used with a default value of 0, which is used when a rating is not present in the calculated frequencies (meaning that the corresponding probability is 0).
 
 This formula for $\epsilon(S)$ represents the expected misclassification rate when using the set $J$ as a decision rule for predicting defaults.
+
+
+Sure. If your scores are categorical and not numerical, you can encode them to numeric values that reflect their order. You can use a dictionary that maps each rating to a number, with higher numbers for better ratings. Once you have encoded the ratings, you can use the same process as before to compute the AR.
+
+Here's how you might do it:
+
+```python
+# define the mapping from ratings to numbers
+rating_to_number = {'US': 0, 'B2': 1, 'B1': 2, 'A2': 3, 'A1': 4}
+
+# create a new column with the numerical ratings
+df['MOD_RAT_NUM'] = df['MOD_RAT'].map(rating_to_number)
+
+# get the numerical scores for defaulters and non-defaulters
+S_D = df[df['DEFAULT'] == 1]['MOD_RAT_NUM'].values
+S_N = df[df['DEFAULT'] == 0]['MOD_RAT_NUM'].values
+
+# calculate the probabilities
+P_SD_less_than_SN = np.mean([1 if s_d < s_n else 0 for s_d in S_D for s_n in S_N])
+P_SD_equals_SN = np.mean([1 if s_d == s_n else 0 for s_d in S_D for s_n in S_N])
+
+# calculate AR
+AR = 2 * P_SD_less_than_SN + P_SD_equals_SN - 1
+
+print(AR)
+```
+
+In this code:
+
+- `df['MOD_RAT'].map(rating_to_number)` creates a new column with the numerical ratings. The `map` method applies the function (in this case, a dictionary lookup) to each element in the column.
+- The rest of the code is identical to before, except that it uses the numerical scores instead of the original ratings.
+
+This computation assumes that your ratings are ordinal (i.e., that they have a meaningful order), and it respects the order when converting to numeric. If your ratings are not ordinal, this computation might not make sense.
