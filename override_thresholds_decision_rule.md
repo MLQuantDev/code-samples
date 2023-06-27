@@ -80,3 +80,15 @@ In this code:
 - The rest of the code is identical to before, except that it uses the numerical scores instead of the original ratings.
 
 This computation assumes that your ratings are ordinal (i.e., that they have a meaningful order), and it respects the order when converting to numeric. If your ratings are not ordinal, this computation might not make sense.
+
+In the context of credit ratings, lower ratings generally indicate higher risk of default. Therefore, when you convert ratings to numerical values, you should assign higher numbers to lower risk ratings. This way, the AR formula would remain consistent: the score (in this case, numerical representation of the rating) of a randomly selected defaulter should be less than that of a randomly selected non-defaulter.
+
+So, if 'A1' is the best rating and 'US' is the worst, your mapping is correct:
+
+```python
+rating_to_number = {'US': 0, 'B2': 1, 'B1': 2, 'A2': 3, 'A1': 4}
+```
+
+This way, a non-defaulter with a better credit rating ('A1' or 'A2') will have a higher numerical score compared to a defaulter with a worse credit rating ('B1', 'B2', 'US'). This setup ensures that the Accuracy Ratio (AR) calculation remains consistent. 
+
+Remember that AR essentially measures how often the model correctly ranks a random non-defaulter higher than a random defaulter. With the aforementioned mapping, a higher numerical score means a better rating, so a higher score for non-defaulters and a lower score for defaulters aligns with the AR calculation.
