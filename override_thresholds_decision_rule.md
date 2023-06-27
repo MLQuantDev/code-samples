@@ -24,3 +24,26 @@ In this code:
 - The `get` method is used with a default value of 0, which is used when a rating is not present in the calculated frequencies (meaning that the corresponding probability is 0).
 
 The result `J` is a list of ratings for which default is more likely than non-default according to the model.
+
+Sure, the following Python code computes the natural error rate ($\epsilon(S)$) according to the given equation:
+
+```python
+# assuming p is the unconditional probability of default, which can be estimated as follows:
+p = df['DEFAULT'].mean()
+
+# compute the probabilities P[S=j|D] and P[S=j|N] for each j
+prob_D = df[df['DEFAULT'] == 1]['MOD_RAT'].value_counts(normalize=True)
+prob_N = df[df['DEFAULT'] == 0]['MOD_RAT'].value_counts(normalize=True)
+
+# compute the error rate using the given equation
+epsilon_S = p * sum(prob_D.get(j, 0) for j in df['MOD_RAT'].unique() if j not in J) + \
+            (1 - p) * sum(prob_N.get(j, 0) for j in J)
+
+print(epsilon_S)
+```
+
+In this code, the error rate $\epsilon(S)$ is calculated by summing over all ratings, adding $p \mathrm{P}[S=j\,|\,D]$ for ratings not in $J$ and $(1-p) \mathrm{P}[S=j\,|\,N]$ for ratings in $J$. 
+
+The `get` method is used with a default value of 0, which is used when a rating is not present in the calculated frequencies (meaning that the corresponding probability is 0).
+
+This formula for $\epsilon(S)$ represents the expected misclassification rate when using the set $J$ as a decision rule for predicting defaults.
